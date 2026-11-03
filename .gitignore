@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+
+# Playwright and test output
+playwright-report/
+blob-report/
+test-results/
+playwright/.cache/
+trace.zip
+*.trace
+
+# Build and coverage output
+coverage/
+dist/
+build/
+
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Authentication and state artifacts
+storageState*.json
+storage-state*.json
+**/storageState*.json
+**/storage-state*.json
+auth.json
+auth*.json
+secrets.json
+secrets*.json
+cookies*.json
+
+# Certificates and private keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Logs
+logs/
+**/logs/**
+!artifacts/logs/
+!artifacts/logs/.gitkeep
+
+# VS Code and JetBrains settings
+.vscode/
+.idea/
+
+# OS metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/
+
+# Node/npm local artifacts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# HyperExecute local binaries
+hyperexecute
+hyperexecute.exe

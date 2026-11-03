@@ -1,0 +1,18 @@
+{
+  "name": "playwright-102-assignment",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright 102 assignment - TestMu AI Selenium Playground on HyperExecute",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:local": "cross-env TEST_MODE=local playwright test",
+    "test:cloud": "cross-env TEST_MODE=cloud playwright test",
+    "report": "playwright show-report playwright-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7"
+  }
+}

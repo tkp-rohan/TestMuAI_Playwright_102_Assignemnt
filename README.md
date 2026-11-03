@@ -1,0 +1,135 @@
+# Playwright 102 Assignment — TestMu AI
+
+This repository implements all three scenarios from the supplied assignment and prepares the suite for parallel execution on HyperExecute.
+
+## Included scenarios
+
+1. **Simple Form Demo** — navigates to the demo, checks the URL, enters a configurable message, clicks **Get Checked Value**, and verifies the displayed message.
+2. **Drag & Drop Sliders** — finds the range input initially set to `15`, drags it to `95`, and verifies its value.
+3. **Input Form Submit** — submits an empty form and verifies native required-field validation, fills all fields, selects **United States** by visible option text, submits, and checks the success message.
+
+## Project structure
+
+```text
+playwright-102-assignment/
+├── .github/workflows/hyperexecute.yml
+├── fixtures/test-fixture.js
+├── tests/
+│   ├── simple-form-demo.spec.js
+│   ├── drag-drop-slider.spec.js
+│   └── input-form-submit.spec.js
+├── artifacts/logs/
+├── hyperexecute.yaml
+├── playwright.config.js
+├── package.json
+├── package-lock.json
+└── README.md
+```
+
+## Requirements
+
+- Node.js 20+
+- npm
+- TestMu AI account and HyperExecute access
+- HyperExecute CLI (for manual cloud runs)
+
+## Environment variables
+
+The suite supports the following variables:
+
+- `LT_USERNAME` — TestMu AI username
+- `LT_ACCESS_KEY` — TestMu AI access key
+- `TEST_MESSAGE` — optional message used by Scenario 1
+- `FORM_EMAIL` — optional email used by Scenario 3
+- `FORM_PASSWORD` — non-sensitive test password used by Scenario 3
+
+For a local cloud run, copy the safe template and replace only the placeholder credentials:
+
+```bash
+cp .env.example .env
+```
+
+Never commit `.env`, `.env.*`, authentication state, or credential files. `.env.example` is the only environment-template file that should be committed.
+
+## Run locally
+
+```bash
+npm install
+npx playwright install chromium
+npm test
+```
+
+The fixture runs locally when `LT_USERNAME` and `LT_ACCESS_KEY` are absent. Local run reports are written to `playwright-report/` and `test-results/`.
+
+## Run on TestMu AI / HyperExecute
+
+### 1. Configure HyperExecute secrets
+
+In the TestMu AI HyperExecute dashboard, open **Secrets** and create:
+
+- `LT_USERNAME` — your TestMu AI username
+- `LT_ACCESS_KEY` — your TestMu AI access key
+
+Do not commit credentials or put them directly in YAML or JavaScript. `hyperexecute.yaml` injects them through the HyperExecute secret references.
+
+### 2. Configure the environment variables
+
+The YAML injects `TEST_MESSAGE`, `FORM_EMAIL`, and `HE_BUILD_NAME`. You can change these in the `env` section. The tests read values through `process.env`.
+
+The matrix values are exposed as `HE_ENV_os` and `HE_ENV_browser` because `matrixEnvPrefix: true` is enabled. The fixture maps `win` to `Windows 10` and `linux` to `Linux` for TestMu AI browser capabilities.
+
+### 3. Download the HyperExecute CLI
+
+Download the CLI for your local operating system from the official page:
+https://www.testmuai.com/support/docs/hyperexecute-cli/
+
+Then set credentials in your terminal (use your real values; do not commit them):
+
+**PowerShell**
+```powershell
+$env:LT_USERNAME="YOUR_USERNAME"
+$env:LT_ACCESS_KEY="YOUR_ACCESS_KEY"
+```
+
+**macOS/Linux**
+```bash
+export LT_USERNAME="YOUR_USERNAME"
+export LT_ACCESS_KEY="YOUR_ACCESS_KEY"
+```
+
+### 4. Trigger the job
+
+```bash
+./hyperexecute --config hyperexecute.yaml --download-artifacts --verbose
+```
+
+On Windows, use `.\hyperexecute.exe --config hyperexecute.yaml --download-artifacts --verbose`.
+
+The matrix creates two OS tasks (Windows 10 and Linux), each using the latest Chrome browser. `concurrency: 2` and `combineTasksInMatrixMode: true` allow the two matrix tasks to run at the same time, subject to your HyperExecute plan's available concurrency.
+
+### 5. Review artifacts
+
+The YAML enables `mergeArtifacts: true` and uploads:
+- Playwright HTML report
+- Playwright JSON report and test output
+- Per-test console logs
+- Per-test failed-network-request logs
+
+TestMu AI session capabilities also enable `network`, `video`, `console`, `visual`, and `commandLog` capture. Review the session recordings and logs in the TestMu AI dashboard. Use the dashboard's artifact download option to download the merged artifact ZIP.
+
+## GitHub Actions (optional)
+
+1. Push this project to a GitHub repository.
+2. In **Settings → Secrets and variables → Actions**, add repository secrets named `LT_USERNAME` and `LT_ACCESS_KEY`.
+3. Run the workflow from **Actions → Playwright 102 - HyperExecute → Run workflow**, or push to `main`.
+
+The workflow downloads the Linux HyperExecute CLI and triggers the YAML job.
+
+## Notes / verification before submission
+
+- The assignment requires the GitHub repository to be **private** and shared with `admin@testmuaicertifications.com`.
+- Submit both the GitHub repository URL and the TestMu AI Test Session IDs on the exam portal.
+- The assignment asks for network logs, video recording, screenshots, and console logs to be enabled. These are enabled in the TestMu AI browser capabilities; Playwright also saves failure screenshots and trace files.
+- The first-time TestMu AI account includes 100 minutes according to the assignment. Contact `admin@testmuaicertifications.com` or `support@testmuai.com` if trial minutes expire.
+- The cloud run and dashboard session IDs cannot be generated from this prepared source bundle. You must add your own TestMu AI credentials, run the job, and copy the resulting session IDs from your dashboard.
+- If the target website changes its selectors or native browser validation wording, inspect the failing step and update the corresponding locator/assertion. The required-field assertion accepts the common Chrome variants “Please fill in this field.” and “Please fill out this field.”
