@@ -18,11 +18,10 @@ test('Scenario 3 - Required validation and successful Input Form Submit', async 
 
   await nameField.fill('Rohan Patel');
   await page.locator('#inputEmail4').fill(process.env.FORM_EMAIL || 'qa.assignment@example.com');
-  await page.locator('input[name="password"]').fill(process.env.FORM_PASSWORD || 'AssignmentOnly123!');
+  await page.locator('input[name="password"]').fill(process.env.FORM_PASSWORD || 'NotARealPassword123!');
   await page.locator('input[name="company"]').fill('TestMu AI');
   await page.locator('input[name="website"]').fill('https://example.com');
 
-  // Select by visible text, as required in the assignment.
   await page.locator('select[name="country"]').selectOption({ label: 'United States' });
 
   await page.locator('input[name="city"]').fill('New York');

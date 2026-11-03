@@ -7,14 +7,13 @@ const test = base.test.extend({
     let page;
     const username = process.env.LT_USERNAME;
     const accessKey = process.env.LT_ACCESS_KEY;
-    const useCloud = process.env.TEST_MODE === 'cloud' || (username && accessKey);
+    const useCloud = process.env.TEST_MODE === 'cloud';
 
     if (useCloud) {
       if (!username || !accessKey) {
         throw new Error('Cloud execution requires LT_USERNAME and LT_ACCESS_KEY.');
       }
 
-      // HyperExecute matrix values are exposed with the HE_ENV_ prefix.
       const matrixOs = (process.env.HE_ENV_os || process.env.TARGET_OS || 'win').toLowerCase();
       const platform = matrixOs === 'linux' ? 'Linux' : 'Windows 10';
       const browserName = process.env.HE_ENV_browser || process.env.TARGET_BROWSER || 'Chrome';
@@ -40,7 +39,6 @@ const test = base.test.extend({
       browser = await chromium.connect({ wsEndpoint: endpoint });
       page = await browser.newPage();
     } else {
-      // Local fallback: run the same scenarios using installed Chromium.
       browser = await chromium.launch({ headless: true });
       page = await browser.newPage();
     }
@@ -49,11 +47,10 @@ const test = base.test.extend({
     const failedRequests = [];
     page.on('console', message => consoleLines.push(`[${message.type()}] ${message.text()}`));
     page.on('pageerror', error => consoleLines.push(`[pageerror] ${error.message}`));
-    page.on('requestfailed', request => failedRequests.push(`${request.method()} ${request.url()} :: ${request.failure()?.errorText || 'failed'}`));
+    page.on('requestfailed', request => failedRequests.push(`[${request.method()}] ${request.url()} :: ${request.failure()?.errorText || 'failed'}`));
 
     await use(page);
 
-    // Persist local diagnostics even when the assertion fails.
     const fs = require('fs');
     const path = require('path');
     const logDir = path.join(process.cwd(), 'artifacts', 'logs');
@@ -71,10 +68,7 @@ const test = base.test.extend({
     if (useCloud && page && !page.isClosed()) {
       const status = testInfo.status === testInfo.expectedStatus ? 'passed' : 'failed';
       const remark = testInfo.status === testInfo.expectedStatus ? 'Assertions passed' : `Test ended with status: ${testInfo.status}`;
-      await page.evaluate(() => {}, `lambdatest_action: ${JSON.stringify({
-        action: 'setTestStatus',
-        arguments: { status, remark }
-      })}`).catch(() => {});
+      await page.evaluate(() => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status, remark } })}`).catch(() => {});
     }
 
     await browser.close();

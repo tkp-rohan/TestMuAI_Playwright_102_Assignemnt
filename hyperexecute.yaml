@@ -3,7 +3,6 @@ globalTimeout: 45
 testSuiteTimeout: 30
 testSuiteStep: 30
 
-# Two separate HyperExecute machines: Windows 10 and Linux.
 runson: ${matrix.os}
 matrixEnvPrefix: true
 matrix:
@@ -14,10 +13,11 @@ concurrency: 2
 combineTasksInMatrixMode: true
 retryOnFailure: false
 
-# Secret values are configured in HyperExecute Dashboard > Secrets.
+# Credentials are resolved only through HyperExecute Dashboard Secrets.
 env:
   LT_USERNAME: ${{.secrets.LT_USERNAME}}
   LT_ACCESS_KEY: ${{.secrets.LT_ACCESS_KEY}}
+  TEST_MODE: "cloud"
   TEST_MESSAGE: "Welcome to TestMu AI"
   FORM_EMAIL: "qa.assignment@example.com"
   HE_BUILD_NAME: "Playwright 102 Assignment"
@@ -28,14 +28,16 @@ cacheDirectories:
 
 pre:
   - npm ci
+  - npx playwright install chromium
   - mkdir -p artifacts/logs test-results playwright-report
 
 testSuites:
   - npx playwright test
 
 mergeArtifacts: true
+stripParentDirectory: true
 uploadArtefacts:
-  - name: Playwright HTML and JSON Reports
+  - name: Playwright Reports
     path:
       - playwright-report/**
       - test-results/**
@@ -46,5 +48,4 @@ uploadArtefacts:
 post:
   - echo "Playwright 102 execution finished."
 
-# Enable test runner reporting in HyperExecute.
 report: true

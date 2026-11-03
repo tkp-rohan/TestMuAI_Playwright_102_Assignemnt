@@ -5,6 +5,9 @@
   "description": "Playwright 102 assignment - TestMu AI Selenium Playground on HyperExecute",
   "scripts": {
     "test": "playwright test",
+    "test:scenario1": "playwright test tests/simple-form-demo.spec.js",
+    "test:scenario2": "playwright test tests/drag-drop-slider.spec.js",
+    "test:scenario3": "playwright test tests/input-form-submit.spec.js",
     "test:headed": "playwright test --headed",
     "test:local": "cross-env TEST_MODE=local playwright test",
     "test:cloud": "cross-env TEST_MODE=cloud playwright test",

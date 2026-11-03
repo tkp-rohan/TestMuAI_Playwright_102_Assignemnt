@@ -133,3 +133,105 @@ The workflow downloads the Linux HyperExecute CLI and triggers the YAML job.
 - The first-time TestMu AI account includes 100 minutes according to the assignment. Contact `admin@testmuaicertifications.com` or `support@testmuai.com` if trial minutes expire.
 - The cloud run and dashboard session IDs cannot be generated from this prepared source bundle. You must add your own TestMu AI credentials, run the job, and copy the resulting session IDs from your dashboard.
 - If the target website changes its selectors or native browser validation wording, inspect the failing step and update the corresponding locator/assertion. The required-field assertion accepts the common Chrome variants “Please fill in this field.” and “Please fill out this field.”
+
+## Individual test execution
+
+```bash
+npm run test:scenario1
+npm run test:scenario2
+npm run test:scenario3
+npm run test:headed
+```
+
+Scenario 2 uses a real mouse drag based on the slider's native min/max geometry, so it verifies the assignment with actual pointer interaction rather than keyboard shortcuts.
+
+## Reports and diagnostics
+
+```bash
+npm run report
+npx playwright show-trace test-results/<failed-test>/trace.zip
+```
+
+Playwright generates:
+
+- HTML report: `playwright-report/`
+- JSON report: `test-results/results.json`
+- Failure screenshots and traces: `test-results/`
+- Console and failed-network logs: `artifacts/logs/`
+- Retained failure videos: configured in Playwright locally
+
+## HyperExecute matrix execution
+
+`hyperexecute.yaml` creates two matrix tasks:
+
+- Windows 10 + Chrome latest
+- Linux + Chrome latest
+
+Each task executes the complete Playwright suite. The YAML uses official supported keys for matrix execution, pre steps, dependency caching, environment variables, consolidated artifacts, and TestMu AI Playwright capabilities.
+
+### Configure dashboard secrets
+
+In HyperExecute Dashboard > Secrets, create:
+
+- `LT_USERNAME`
+- `LT_ACCESS_KEY`
+
+The credentials are referenced only through:
+
+```yaml
+env:
+  LT_USERNAME: ${{.secrets.LT_USERNAME}}
+  LT_ACCESS_KEY: ${{.secrets.LT_ACCESS_KEY}}
+```
+
+Do not add real values to YAML, `.env`, scripts, logs, or Git.
+
+### Download and execute CLI
+
+Download the official HyperExecute CLI for your operating system, then run:
+
+```bash
+./hyperexecute --config hyperexecute.yaml --download-artifacts --verbose
+```
+
+Windows PowerShell:
+
+```powershell
+.\hyperexecute.exe --config hyperexecute.yaml --download-artifacts --verbose
+```
+
+Keep `LT_USERNAME` and `LT_ACCESS_KEY` as local environment variables when running the CLI manually. Configure matching Dashboard Secrets for unattended HyperExecute jobs.
+
+### Artifacts
+
+`mergeArtifacts: true` consolidates artifacts from both matrix environments. The dashboard artifact bundle can contain:
+
+- Playwright HTML and JSON reports
+- Failure screenshots and traces
+- Console and network logs
+- TestMu AI session screenshots, videos, network and console information
+
+## Troubleshooting
+
+- If the form button is not visible, wait for navigation and use the existing role and ID locators.
+- If Scenario 2 shifts to the wrong value, rerun from a fresh page because range controls are stateful.
+- If cloud execution is attempted locally, set `TEST_MODE=cloud` only when both credentials are available.
+- If local execution unexpectedly connects to TestMu AI, verify `TEST_MODE` is unset or set to `local`.
+- If Chromium is missing, run `npx playwright install chromium`.
+- If the target website changes selectors or validation text, update the scenario and rerun the three-test suite.
+
+## Submission checklist
+
+Before submission:
+
+- Run `npm install`
+- Run `npx playwright install chromium`
+- Run `npm test` and confirm all three scenarios pass locally
+- Configure LT_USERNAME and LT_ACCESS_KEY in HyperExecute Secrets
+- Run the Windows 10/Chrome and Linux/Chrome matrix
+- Download the merged artifacts
+- Privately share the repository with `admin@testmuaicertifications.com`
+- Save the GitHub repository URL and TestMu AI Test Session IDs for the exam portal
+- Submit within the assignment deadline
+
+Cloud execution, session IDs and repository sharing require dashboard access and are not available locally.
