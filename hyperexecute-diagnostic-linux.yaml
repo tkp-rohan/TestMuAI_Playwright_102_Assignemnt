@@ -1,0 +1,28 @@
+version: 0.1
+
+runtime:
+  - language: node
+    version: "20"
+
+runson: linux
+globalTimeout: 15
+testSuiteTimeout: 10
+testSuiteStep: 5
+
+env:
+  LT_USERNAME: ${{.secrets.LT_USERNAME}}
+  LT_ACCESS_KEY: ${{.secrets.LT_ACCESS_KEY}}
+  HE_DIAGNOSTIC_PLATFORM: "Linux"
+
+pre:
+  - npm ci
+
+testSuites:
+  - npx playwright test tests/grid-smoke.spec.js --workers=1
+
+report: true
+uploadArtifacts:
+  - name: CDP Diagnostic Results
+    path:
+      - playwright-report/**
+      - test-results/**
