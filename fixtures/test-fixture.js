@@ -5,13 +5,13 @@ const test = base.test.extend({
   page: async ({}, use, testInfo) => {
     let browser;
     let page;
-    const username = process.env.LT_USERNAME;
-    const accessKey = process.env.LT_ACCESS_KEY;
+    const username = process.env.LT_USERNAME?.trim();
+    const accessKey = process.env.LT_ACCESS_KEY?.trim();
     const useCloud = process.env.TEST_MODE === 'cloud';
 
     if (useCloud) {
       if (!username || !accessKey) {
-        throw new Error('Cloud execution requires LT_USERNAME and LT_ACCESS_KEY.');
+        throw new Error('Cloud execution requires non-empty LT_USERNAME and LT_ACCESS_KEY. Configure both as HyperExecute project secrets; do not put credentials in the repository.');
       }
 
       const matrixOs = (process.env.HE_ENV_os || process.env.TARGET_OS || 'win').toLowerCase();
