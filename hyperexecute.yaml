@@ -38,7 +38,6 @@ cacheDirectories:
 pre:
   - npm ci
   - npx playwright install chromium
-  - node -e "['artifacts/logs', 'test-results', 'playwright-report'].forEach(p => require('fs').mkdirSync(p, { recursive: true }))"
 
 # Execute tests
 testSuites:
