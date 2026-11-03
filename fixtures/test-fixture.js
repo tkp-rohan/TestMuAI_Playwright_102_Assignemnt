@@ -28,10 +28,7 @@ const test = base.test.extend({
           accessKey,
           network: true,
           video: true,
-          console: true,
-          visual: true,
-          commandLog: true,
-          playwrightClientVersion: require('@playwright/test/package.json').version
+          console: true
         }
       };
 
