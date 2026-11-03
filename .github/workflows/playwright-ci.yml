@@ -1,0 +1,55 @@
+name: Playwright 102 - Cross-platform CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  playwright:
+    name: Playwright tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium (Linux)
+        if: runner.os == 'Linux'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright Chromium (Windows)
+        if: runner.os == 'Windows'
+        run: npx playwright install chromium
+
+      - name: Run all three scenarios locally
+        run: npm run test:local
+        env:
+          CI: true
+          TEST_MESSAGE: Welcome to TestMu AI
+          FORM_EMAIL: qa.assignment@example.com
+
+      - name: Upload Playwright reports and diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-results-${{ runner.os }}
+          path: |
+            playwright-report/
+            test-results/
+            artifacts/logs/
+          if-no-files-found: warn
+          retention-days: 14
