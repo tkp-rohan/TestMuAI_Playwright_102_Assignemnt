@@ -11,17 +11,9 @@ testSuiteStep: 30
 
 runson: ${matrix.os}
 
-# Explicitly bind project-level HyperExecute secrets to this project.
 project:
   id: "01M6HFK619ZSX4GC32WZPKVJMS"
-matrixEnvPrefix: true
-
-matrix:
-  os: [win, linux]
-  browser: [Chrome]
-
-concurrency: 2
-combineTasksInMatrixMode: true
+concurrency: 1
 retryOnFailure: false
 
 # Dashboard Secrets and environment variables
