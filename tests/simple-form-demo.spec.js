@@ -7,6 +7,7 @@ test('Scenario 1 - Simple Form Demo displays the submitted message', async ({ pa
   await page.getByText('Simple Form Demo', { exact: true }).first().click();
 
   await expect(page).toHaveURL(/simple-form-demo/);
+  await page.waitForLoadState('networkidle');
 
   const messageInput = page.getByRole('textbox', { name: 'Please enter your Message', exact: true });
   const submitButton = page.getByRole('button', { name: 'Get Checked Value', exact: true });

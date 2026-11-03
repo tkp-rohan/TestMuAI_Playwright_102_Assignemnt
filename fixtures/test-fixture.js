@@ -44,7 +44,19 @@ const test = base.test.extend({
       };
 
       const endpoint = `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(JSON.stringify(capabilities))}`;
-      browser = await chromium.connect({ wsEndpoint: endpoint });
+      try {
+        browser = await chromium.connect({ wsEndpoint: endpoint });
+      } catch (error) {
+        if (/401|unauthorized/i.test(String(error?.message))) {
+          throw new Error(
+            'TestMu AI cloud authentication failed (401 Unauthorized). ' +
+            'Verify that LT_USERNAME and LT_ACCESS_KEY belong to the same TestMu AI account, ' +
+            'that LT_ACCESS_KEY is current and has no surrounding spaces, and that the dashboard secret is not masked or stale. ' +
+            'Rotate the access key in the TestMu AI profile if necessary, then update the LT_ACCESS_KEY HyperExecute secret.'
+          );
+        }
+        throw error;
+      }
       page = await browser.newPage();
     } else {
       browser = await chromium.launch({ headless: true });

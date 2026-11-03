@@ -186,6 +186,19 @@ env:
 
 Do not add real values to YAML, `.env`, scripts, logs, or Git.
 
+If HyperExecute reports `WebSocket ... 401 Unauthorized`, the username and access
+key supplied to the Playwright CDP endpoint are not valid together. Verify the
+following:
+
+1. The `LT_USERNAME` and `LT_ACCESS_KEY` Dashboard Secrets come from the same
+   TestMu AI account.
+2. The access key has not expired or been rotated; copy it again from the
+   account profile and update the `LT_ACCESS_KEY` Dashboard Secret.
+3. Do not add quotation marks, spaces, or line breaks to either secret.
+4. Re-run the job. The fixture trims surrounding whitespace from both
+   environment values, so accidental leading/trailing whitespace does not
+   remain in the request.
+
 ### Download and execute CLI
 
 Download the official HyperExecute CLI for your operating system, then run:
