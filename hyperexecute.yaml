@@ -9,11 +9,18 @@ globalTimeout: 45
 testSuiteTimeout: 30
 testSuiteStep: 30
 
-runson: win
+runson: ${matrix.os}
 
 project:
   id: "01M6HFK619ZSX4GC32WZPKVJMS"
-concurrency: 1
+matrixEnvPrefix: true
+
+matrix:
+  os: [win, linux]
+  browser: [Chrome]
+
+concurrency: 2
+combineTasksInMatrixMode: true
 retryOnFailure: false
 
 # Dashboard Secrets and environment variables
