@@ -1,7 +1,6 @@
 
 version: 0.1
 
-# Node.js runtime
 runtime:
   - language: node
     version: "20"
@@ -10,7 +9,6 @@ globalTimeout: 45
 testSuiteTimeout: 30
 testSuiteStep: 30
 
-# Run on Windows and Linux
 runson: ${matrix.os}
 matrixEnvPrefix: true
 
@@ -42,25 +40,27 @@ pre:
   - npx playwright install chromium
   - node -e "['artifacts/logs', 'test-results', 'playwright-report'].forEach(p => require('fs').mkdirSync(p, { recursive: true }))"
 
-# Execute Playwright tests
+# Execute tests
 testSuites:
   - npx playwright test
 
-# Merge artifacts from parallel tasks
+# Generate Playwright HTML report
+report: true
+partialReports:
+  frameworkName: playwright
+  location: playwright-report
+  type: html
+
+# Artifact management
 mergeArtifacts: true
 stripParentDirectory: true
 
-# Upload reports and logs
-uploadArtefacts:
+uploadArtifacts:
   - name: Playwright Reports
     path:
       - playwright-report/**
       - test-results/**
 
-  - name: Execution Logs
-    path:
-      - artifacts/logs/**
-
-# Post-execution step
+# Post execution
 post:
   - echo "Playwright 102 execution finished."
