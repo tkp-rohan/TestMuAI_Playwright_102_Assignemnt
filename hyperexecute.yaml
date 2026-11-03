@@ -9,7 +9,7 @@ globalTimeout: 45
 testSuiteTimeout: 30
 testSuiteStep: 30
 
-runson: ${matrix.os}
+runson: win
 
 project:
   id: "01M6HFK619ZSX4GC32WZPKVJMS"
