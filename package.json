@@ -11,11 +11,13 @@
     "test:headed": "playwright test --headed",
     "test:local": "cross-env TEST_MODE=local playwright test",
     "test:cloud": "cross-env TEST_MODE=cloud playwright test",
-    "report": "playwright show-report playwright-report"
+    "report": "playwright show-report playwright-report",
+    "test:cdp-smoke": "node diagnostics/cdp-auth-smoke.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "playwright": "1.64.1"
   }
 }
