@@ -9,6 +9,17 @@ const test = base.test.extend({
     const accessKey = process.env.LT_ACCESS_KEY?.trim();
     const useCloud = process.env.TEST_MODE === 'cloud';
 
+    // Safe auth diagnostics; never log the access key itself.
+    if (useCloud) {
+      console.info('[HyperExecute auth preflight]', {
+        username: username || '(missing)',
+        usernameMatchesExpectedAccount: username === 'rohanpateldevrp',
+        accessKeyPresent: Boolean(accessKey),
+        accessKeyLength: accessKey?.length || 0,
+        testMode: process.env.TEST_MODE
+      });
+    }
+
     if (useCloud) {
       if (!username || !accessKey) {
         throw new Error('Cloud execution requires non-empty LT_USERNAME and LT_ACCESS_KEY. Configure both as HyperExecute project secrets; do not put credentials in the repository.');
