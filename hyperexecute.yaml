@@ -1,8 +1,16 @@
+
 version: 0.1
+
+# Install Node.js 20 before executing pre-steps
+runtime:
+  - language: node
+    version: "20"
+
 globalTimeout: 45
 testSuiteTimeout: 30
 testSuiteStep: 30
 
+# Run on Windows 10 and Linux
 runson: ${matrix.os}
 matrixEnvPrefix: true
 matrix:
@@ -13,7 +21,7 @@ concurrency: 2
 combineTasksInMatrixMode: true
 retryOnFailure: false
 
-# Credentials are resolved only through HyperExecute Dashboard Secrets.
+# Credentials are resolved through HyperExecute Dashboard Secrets
 env:
   LT_USERNAME: ${{.secrets.LT_USERNAME}}
   LT_ACCESS_KEY: ${{.secrets.LT_ACCESS_KEY}}
@@ -22,30 +30,42 @@ env:
   FORM_EMAIL: "qa.assignment@example.com"
   HE_BUILD_NAME: "Playwright 102 Assignment"
 
+# Dependency caching
 cacheKey: '{{ checksum "package-lock.json" }}'
 cacheDirectories:
   - node_modules
 
+# Install dependencies and prepare directories
 pre:
   - npm ci
   - npx playwright install chromium
-  - mkdir -p artifacts/logs test-results playwright-report
+  - node -e "['artifacts/logs', 'test-results', 'playwright-report'].forEach((p) => require('fs').mkdirSync(p, { recursive: true }))"
 
+# Execute Playwright tests
 testSuites:
   - npx playwright test
 
+# Collect reports
+report: true
+partialReports:
+  frameworkName: playwright
+  location: playwright-report
+  type: HTML
+
+# Consolidate and upload artifacts
 mergeArtifacts: true
 stripParentDirectory: true
+
 uploadArtefacts:
   - name: Playwright Reports
     path:
       - playwright-report/**
       - test-results/**
+
   - name: Execution Logs
     path:
       - artifacts/logs/**
 
+# Post execution
 post:
   - echo "Playwright 102 execution finished."
-
-report: true
