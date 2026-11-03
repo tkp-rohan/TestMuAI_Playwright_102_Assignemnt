@@ -37,7 +37,6 @@ cacheDirectories:
 # Pre-execution steps
 pre:
   - npm ci
-  - npx playwright install chromium
 
 # Execute tests
 testSuites:
