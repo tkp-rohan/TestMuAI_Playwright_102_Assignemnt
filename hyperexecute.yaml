@@ -10,6 +10,10 @@ testSuiteTimeout: 30
 testSuiteStep: 30
 
 runson: ${matrix.os}
+
+# Explicitly bind project-level HyperExecute secrets to this project.
+project:
+  id: "01M6HFK619ZSX4GC32WZPKVJMS"
 matrixEnvPrefix: true
 
 matrix:
